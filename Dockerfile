@@ -1,16 +1,18 @@
-FROM ubuntu
+FROM nvidia/cuda:11.8.0-devel-ubuntu22.04
 
-ARG DEBIAN_FRONTEND=noninteractive
+ARG USER_NAME=argosopentech
 
-RUN apt-get update
-RUN apt-get install -y sudo
+WORKDIR /home/${USER_NAME}
+COPY bin/argos-train-init ./
 
-RUN useradd -ms /bin/bash argosopentech
-RUN passwd -d argosopentech
-RUN echo "argosopentech ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/argosopentech
-RUN usermod -aG sudo argosopentech
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
+    apt-get install -y sudo && \
+    useradd -ms /bin/bash ${USER_NAME} && \
+    passwd -d ${USER_NAME} && \
+    echo "${USER_NAME} ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/${USER_NAME} && \
+    usermod -aG sudo ${USER_NAME} && \
+    chown -R ${USER_NAME}:${USER_NAME} . && \
+    chmod 774 /home/${USER_NAME}/argos-train-init
 
-COPY bin/argos-train-init /home/argosopentech/
-RUN chown argosopentech:argosopentech /home/argosopentech/argos-train-init
-RUN chmod 774 /home/argosopentech/argos-train-init
-
+USER ${USER_NAME}
+CMD [ "/bin/bash" ]
