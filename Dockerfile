@@ -1,4 +1,5 @@
-FROM nvidia/cuda:11.8.0-devel-ubuntu22.04
+#FROM nvidia/cuda:11.8.0-devel-ubuntu22.04
+FROM ubuntu@sha256:2adf22367284330af9f832ffefb717c78239f6251d9d0f58de50b86229ed1427
 
 ARG USER_NAME=argosopentech
 
