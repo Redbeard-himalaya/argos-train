@@ -41,12 +41,13 @@ def train(
         settings.SOURCE_PATH.unlink(missing_ok=True)
         settings.TARGET_PATH.unlink(missing_ok=True)
 
+        # get all datasets in NetworkDataset obj from data-index.json
         available_datasets = get_available_datasets()
 
-        from_and_to_codes = [from_code, to_code]
+        # filter out datasets not in [from_code, to_code]
         available_datasets = list(
             filter(
-                lambda x: x.from_code in from_and_to_codes
+                lambda x: x.from_code in [from_code, to_code]
                 and x.to_code in from_and_to_codes,
                 available_datasets,
             )
@@ -79,8 +80,11 @@ def train(
             )
         )
 
+        # reverse reverse_dataset (src, tgt) to (tgt, src)
         for reverse_dataset in reverse_datasets:
             reverse_dataset_data = reverse_dataset.data()
+            # reverse_dataset_data[1], reverse_dataset_data[0] in tgt, src pair
+            # reverse_dataset_data[0] is typeof deque()
             dataset = Dataset(reverse_dataset_data[1], reverse_dataset_data[0])
 
             # Hack to preserve reference metadata
